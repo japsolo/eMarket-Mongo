@@ -1,0 +1,26 @@
+<%- include('partials/head', {title: 'Home'}); %>
+	<body>
+		<%- include('partials/navbar', {isActive: 'Home'}); %>
+
+		<!-- Productos -->
+		<div class="container">
+			<div class="row">
+				<% for(var i = 0; i < theProducts.length; i++) { %>
+				<div class="col-lg-3">
+					<div class="card" style="margin-top: 20px; margin-bottom: 20px;">
+						<img class="card-img-top" src="/assets/images/pdtos/<%= theProducts[i].pdtoImage %>" alt="thumbnail">
+						<div class="card-body">
+							<h5 class="card-title"><%= theProducts[i].pdtoName %></h5>
+							<p class="card-text"><b>$ <%= theProducts[i].pdtoPrice %></b></p>
+							<p class="card-text"><%= theProducts[i].pdtoDesc %></p>
+							<a href="/product/detail/AA" class="btn btn-info">Detalle</a>
+							<a href="/product/edit/AA" class="btn btn-warning">Editar</a>
+						</div>
+					</div>
+				</div>
+				<% } %>
+			</div>
+		</div>
+
+	</body>
+</html>

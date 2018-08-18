@@ -1,0 +1,37 @@
+<%- include('partials/head', {title: 'Create'}); %>
+	<body>
+		<%- include('partials/navbar', {isActive: 'Create'}); %>
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-lg-8">
+					<h2>Crear tu producto</h2>
+
+					<form action="/create" method="post" enctype="multipart/form-data">
+						<div class="form-group">
+							<label>Nombre de producto</label>
+							<input type="text" name="pdtoName" class="form-control">
+						</div>
+						<div class="form-group">
+							<label>Precio del producto</label>
+							<input type="text" name="pdtoPrice" class="form-control">
+						</div>
+						<div class="form-group">
+							<label>Descripción corta</label>
+							<input type="text" name="pdtoDesc" class="form-control">
+						</div>
+						<div class="form-group">
+							<label>Descripción larga</label>
+							<textarea rows="7" name="pdtoLongDesc" class="form-control"></textarea>
+						</div>
+						<div class="form-group">
+							<label>Imagen</label>
+							<input type="file" name="pdtoImage" class="form-control">
+						</div>
+						<button type="submit" class="btn btn-success">Crear Producto</button>
+					</form>
+				</div>
+			</div>
+		</div>
+
+	</body>
+</html>
