@@ -1,0 +1,28 @@
+<%- include('partials/head', {title: 'Home'}); %>
+	<body>
+		<%- include('partials/navbar', {isActive: 'Home'}); %>
+
+		<!-- Productos -->
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-lg-6">
+					<div class="card">
+						<img class="card-img-top" src="/assets/images/pdtos/<%= product.pdtoImage %>" alt="thumbnail">
+						<div class="card-body">
+							<h5 class="card-title"><%= product.pdtoName %></h5>
+							<p class="card-text"><b>$ <%= product.pdtoPrice %></b></p>
+							<p class="card-text"><%= product.pdtoDesc %></p>
+							<p class="card-text"><%= product.pdtoLongDesc %></p>
+							<form action="/product/delete/<%= product._id %>" method="post">
+								<a href="/product/edit/" class="btn btn-warning">Editar</a>
+								<button type="submit" class="btn btn-danger">Eliminar</button>
+								<a href="/" class="btn btn-default">Volver</a>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</body>
+</html>

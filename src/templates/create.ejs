@@ -5,33 +5,73 @@
 			<div class="row justify-content-center">
 				<div class="col-lg-8">
 					<h2>Crear tu producto</h2>
-
-					<form action="/create" method="post" enctype="multipart/form-data">
+					<% if (typeof errors != 'undefined') { %>
+						<p class="alert alert-danger">	<%= errors %> </p>
+					<% } %>
+					<form id="formCreate" action="/create" method="post" enctype="multipart/form-data">
 						<div class="form-group">
 							<label>Nombre de producto</label>
 							<input type="text" name="pdtoName" class="form-control">
+							<div class="invalid-feedback"></div>
 						</div>
 						<div class="form-group">
 							<label>Precio del producto</label>
 							<input type="text" name="pdtoPrice" class="form-control">
+							<div class="invalid-feedback"></div>
 						</div>
 						<div class="form-group">
 							<label>Descripción corta</label>
 							<input type="text" name="pdtoDesc" class="form-control">
+							<div class="invalid-feedback"></div>
 						</div>
 						<div class="form-group">
 							<label>Descripción larga</label>
 							<textarea rows="7" name="pdtoLongDesc" class="form-control"></textarea>
+							<div class="invalid-feedback"></div>
 						</div>
 						<div class="form-group">
 							<label>Imagen</label>
 							<input type="file" name="pdtoImage" class="form-control">
+							<div class="invalid-feedback"></div>
 						</div>
 						<button type="submit" class="btn btn-success">Crear Producto</button>
 					</form>
 				</div>
 			</div>
 		</div>
+		<script>
+			let theForm = document.querySelector('#formCreate');
+			let theElements = Array.from(theForm.elements);
+			theElements.pop();
 
+			// let laImagen = document.querySelector('[type="file"]').files.length;
+			// if (!laImagen.length) {
+			// 	window.alert('Subí una imagen');
+			// }
+			// console.log(laImagen);
+
+			theElements.forEach(oneElement => {
+				oneElement.onblur = function () {
+					if (this.value === '') {
+						this.classList.add('is-invalid');
+						this.parentElement.querySelector('.invalid-feedback').innerText = 'Campo obligatorio';
+					} else {
+						this.classList.remove('is-invalid');
+						oneElement.parentElement.querySelector('.invalid-feedback').innerText = '';
+					}
+				};
+			});
+
+			theForm.onsubmit = function (e) {
+				if (theElements[0].value === '' || theElements[1].value === '' || theElements[2].value === '' || theElements[4].value === '') {
+					e.preventDefault();
+					theElements.forEach(function (oneElement) {
+						oneElement.classList.add('is-invalid');
+						oneElement.parentElement.querySelector('.invalid-feedback').innerText = 'Campo obligatorio';
+					});
+				}
+			};
+
+		</script>
 	</body>
 </html>

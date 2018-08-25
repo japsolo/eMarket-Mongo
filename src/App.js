@@ -8,9 +8,10 @@ const storage = multer.diskStorage({
 		cb(null, './public/images/pdtos/');
 	},
 	filename: function (req, file, cb) {
-		let imgName = req.body.pdtoName.replace(/ /g, '-').toLowerCase();
+		let imgName = req.body.pdtoName.trim().replace(/ /g, '-').toLowerCase();
+		let imgFinalName = imgName + '-' + Date.now();
 		let ext = file.originalname.substr(file.originalname.length - 4);
-		cb(null, imgName + ext);
+		cb(null, imgFinalName + ext);
 	}
 });
 
@@ -29,7 +30,7 @@ app.use('/assets/', express.static(__dirname + '/../public/'));
 mongoose.connect('mongodb://localhost/dbShop');
 
 const productSchema = new mongoose.Schema({
-	// slug: { type: String, required: true },
+	slug: { type: String, required: true },
 	pdtoName: { type: String, required: true },
 	pdtoPrice: { type: String, required: true },
 	pdtoDesc: { type: String, required: true },
@@ -44,8 +45,11 @@ Product.find({}, (error, result) => {
 	else {
 		if (result.length === 0) {
 			for (var i = 1; i <= 12; i++) {
+				let pdtoName = faker.commerce.productName();
+				let slugText = pdtoName.replace(/ /g, '-').toLowerCase();
 				Product.create({
-					pdtoName: faker.commerce.productName(),
+					slug: slugText,
+					pdtoName: pdtoName,
 					pdtoPrice: faker.commerce.price(),
 					pdtoDesc: faker.lorem.sentence(),
 					pdtoLongDesc: faker.lorem.sentences(),
@@ -71,15 +75,41 @@ app.get('/create', (req, res) => {
 });
 
 app.post('/create', upload.single('pdtoImage'), (req, res) => {
-	// res.send({ body: req.body, file: req.file });
-	Product.create({
-		pdtoName: req.body.pdtoName,
-		pdtoPrice: req.body.pdtoPrice,
-		pdtoDesc: req.body.pdtoDesc,
-		pdtoLongDesc: req.body.pdtoLongDesc,
-		pdtoImage: req.file.filename
-	}, (error, result) => {
-		if (error) console.error(error);
+	let slug = req.body.pdtoName.trim().replace(/ /g, '-').toLowerCase();
+	let pdtoName = req.body.pdtoName.trim();
+	let pdtoPrice = req.body.pdtoPrice.trim();
+
+	if (pdtoName === '' || pdtoPrice === '') {
+		res.render('create', { errors: 'Todos los campos son obligatorios' });
+	} else {
+		Product.create({
+			slug: slug,
+			pdtoName: pdtoName,
+			pdtoPrice: pdtoPrice,
+			pdtoDesc: req.body.pdtoDesc.trim(),
+			pdtoLongDesc: req.body.pdtoLongDesc.trim(),
+			pdtoImage: req.file.filename
+		}, (error, result) => {
+			if (error) console.error(error);
+			else res.redirect('/');
+		});
+	}
+});
+
+app.get('/product/detail/:slug', (req, res) => {
+	Product.findOne({ slug: req.params.slug, _id: req.query.id }, (error, result) => {
+		if (error) console.log('Consulta: ', error);
+		else res.render('detail', { product: result });
+	});
+});
+
+app.post('/product/delete/:id', (req, res) => {
+	Product.deleteOne({ _id: req.params.id }, (error, result) => {
+		if (error) console.log(error);
 		else res.redirect('/');
 	});
+});
+
+app.use((req, res, next) => {
+	res.status(404).send('404 NO FOUND');
 });
