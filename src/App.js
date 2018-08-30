@@ -66,8 +66,8 @@ Product.find({}, (error, result) => {
 app.get('/', (req, res) => {
 	Product.find({}, (error, result) => {
 		if (error) console.log(error);
-		else res.render('index', { theProducts: result });
-	});
+		else res.render('index', { theProducts: result, deleted: req.query.deleted });
+	}).sort({ pdtoName: 'desc' });
 });
 
 app.get('/create', (req, res) => {
@@ -106,8 +106,37 @@ app.get('/product/detail/:slug', (req, res) => {
 app.post('/product/delete/:id', (req, res) => {
 	Product.deleteOne({ _id: req.params.id }, (error, result) => {
 		if (error) console.log(error);
-		else res.redirect('/');
+		else res.redirect('/?deleted=true');
 	});
+});
+
+app.get('/product/edit/:slug', (req, res) => {
+	Product.findOne({ slug: req.params.slug, _id: req.query.id }, (err, result) => {
+		if (err) console.log(err);
+		else res.render('create', { product: result });
+	});
+});
+
+app.post('/product/edit/:id', upload.single('pdtoImage'), (req, res) => {
+	let slug = req.body.pdtoName.trim().replace(/ /g, '-').toLowerCase();
+	let pdtoName = req.body.pdtoName.trim();
+	let pdtoPrice = req.body.pdtoPrice.trim();
+
+	Product.findByIdAndUpdate(
+		{ _id: req.params.id },
+		{
+			slug: slug,
+			pdtoName: pdtoName,
+			pdtoPrice: pdtoPrice,
+			pdtoDesc: req.body.pdtoDesc.trim(),
+			pdtoLongDesc: req.body.pdtoLongDesc.trim(),
+			pdtoImage: req.file.filename
+		},
+		(error, result) => {
+			if (error) console.log(error);
+			else res.redirect('/');
+		}
+	);
 });
 
 app.use((req, res, next) => {

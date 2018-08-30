@@ -4,29 +4,53 @@
 		<div class="container">
 			<div class="row justify-content-center">
 				<div class="col-lg-8">
-					<h2>Crear tu producto</h2>
-					<% if (typeof errors != 'undefined') { %>
-						<p class="alert alert-danger">	<%= errors %> </p>
+					<% if (typeof product === 'undefined') { %>
+						<h2>Crear tu producto</h2>
+						<form id="formCreate" action="/create" method="post" enctype="multipart/form-data">
+					<% } else { %>
+						<h2>Editando: <%= product.pdtoName %></h2>
+						<img src="/assets/images/pdtos/<%= product.pdtoImage %>" class="border border-primary rounded img-fluid">
+						<form id="formCreate" action="/product/edit/<%= product._id %>" method="post" enctype="multipart/form-data">
 					<% } %>
-					<form id="formCreate" action="/create" method="post" enctype="multipart/form-data">
+
+					<% if (typeof errors != 'undefined') { %>
+						<p class="alert alert-danger"> <%= errors %> </p>
+					<% } %>
+
 						<div class="form-group">
 							<label>Nombre de producto</label>
-							<input type="text" name="pdtoName" class="form-control">
+							<input
+								type="text"
+								name="pdtoName"
+								class="form-control"
+								value="<%= (typeof product === 'undefined') ? '' : product.pdtoName %>"
+							>
 							<div class="invalid-feedback"></div>
 						</div>
 						<div class="form-group">
 							<label>Precio del producto</label>
-							<input type="text" name="pdtoPrice" class="form-control">
+							<input
+								type="text"
+								name="pdtoPrice"
+								class="form-control"
+								value="<%= (typeof product === 'undefined') ? '' : product.pdtoPrice %>"
+							>
 							<div class="invalid-feedback"></div>
 						</div>
 						<div class="form-group">
 							<label>Descripción corta</label>
-							<input type="text" name="pdtoDesc" class="form-control">
+							<input
+								type="text"
+								name="pdtoDesc"
+								class="form-control"
+								value="<%= (typeof product === 'undefined') ? '' : product.pdtoDesc %>"
+							>
 							<div class="invalid-feedback"></div>
 						</div>
 						<div class="form-group">
 							<label>Descripción larga</label>
-							<textarea rows="7" name="pdtoLongDesc" class="form-control"></textarea>
+							<textarea rows="7" name="pdtoLongDesc" class="form-control"
+							><%= (typeof product === 'undefined') ? '' : product.pdtoLongDesc %></textarea>
 							<div class="invalid-feedback"></div>
 						</div>
 						<div class="form-group">
@@ -68,7 +92,17 @@
 					theElements.forEach(function (oneElement) {
 						oneElement.classList.add('is-invalid');
 						oneElement.parentElement.querySelector('.invalid-feedback').innerText = 'Campo obligatorio';
+						if (oneElement.value !== '') {
+							oneElement.classList.remove('is-invalid');
+							oneElement.parentElement.querySelector('.invalid-feedback').innerText = '';
+						}
 					});
+					let theImage = document.querySelector('[type="file"]');
+
+					if (!theImage.files.length) {
+						window.alert('subi una imagen');
+						e.preventDefault();
+					}
 				}
 			};
 

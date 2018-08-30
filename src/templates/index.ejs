@@ -6,7 +6,7 @@
 		<div class="container">
 			<% if (typeof deleted !== 'undefined') { %>
 			<div class="alert alert-success" role="alert">
-				<%= deleted %>
+				Producto eliminado
 			</div>
 			<% } %>
 			<div class="row">
@@ -19,7 +19,7 @@
 							<p class="card-text"><b>$ <%= onePdto.pdtoPrice %></b></p>
 							<p class="card-text"><%= onePdto.pdtoDesc %></p>
 							<a href="/product/detail/<%= onePdto.slug %>?id=<%= onePdto._id %>" class="btn btn-info">Detalle</a>
-							<a href="/product/edit/AA" class="btn btn-warning">Editar</a>
+							<a href="/product/edit/<%= onePdto.slug %>?id=<%= onePdto._id %>" class="btn btn-warning">Editar</a>
 						</div>
 					</div>
 				</div>
